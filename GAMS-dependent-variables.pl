@@ -34,14 +34,12 @@ sub trim ($)
     return $arg;
 }
 
-use File::Temp qw/ tempfile tempdir /;
+use File::Temp qw/tempfile/;
 use Shell qw/sed tac/;
 
-exit 1 unless @ARGV >= 2;
-exit 2 unless -r $ARGV[0];
+exit 1 unless @ARGV >= 3;
 
-print $directory = tempdir or die $!." at ".$.;
-print "\n";
+$directory = shift @ARGV;
 
 # Create dictionary sed script file
 
