@@ -53,7 +53,7 @@ while(<dictionary>)
     ($_, $comment) = ($comment, '') if $_ eq ''; # if no comment
     next if $_ eq ''; # if no definition
     ($declaration, $definition) = map {trim $_} split /=/;
-    print display_dependent "Parameter $declaration $comment;\n$declaration = $definition;\n" or die $!." at ".$.;
+    print display_dependent "Parameter $declaration $comment;\n$declaration = $definition\n" or die $!." at ".$.;
     $name = $declaration;
     if ($declaration =~ /^([^\(]+)\(([^\)]+)\)$/)
     {
