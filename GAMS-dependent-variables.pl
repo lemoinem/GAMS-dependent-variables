@@ -67,11 +67,12 @@ while(<dictionary>)
             $definition =~ s/\b$_\b/\\$i/ig;
         }
         $declaration .= '\\)';
-        $definition =~ s/\//\\\//g;
-        $definition =~ s/\.l(\s*\()/\1/g;
-        $definition =~ s/;$//g;
-        print rev_script "s/\\b$declaration/($definition)/g\n" or die $!." at ".$.;
     }
+    else { $declaration .= '\\b'; }
+    $definition =~ s/\//\\\//g;
+    $definition =~ s/\.l(\s*\()/\1/g;
+    $definition =~ s/;$//g;
+    print rev_script "s/\\b$declaration/($definition)/g\n" or die $!." at ".$.;
     print display_dependent "Display $name;\n\n" or die $!." at ".$.;
 }
 
