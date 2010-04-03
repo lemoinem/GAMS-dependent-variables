@@ -44,7 +44,7 @@ $directory = shift @ARGV;
 # Create dictionary sed script file
 
 open rev_script, ">$directory/rev-script" or die $!." at ".$.;
-open display_dependent, ">$directory/display-dependent.inc" or die $!." at ".$.;
+open display_dependent, ">$directory/display-dependent.gen" or die $!." at ".$.;
 open dictionary, "<$ARGV[0]" or die $!." at ".$.;
 
 while(<dictionary>)
@@ -53,27 +53,31 @@ while(<dictionary>)
     ($_, $comment) = ($comment, '') if $_ eq ''; # if no comment
     next if $_ eq ''; # if no definition
     ($declaration, $definition) = map {trim $_} split /=/;
-    print display_dependent "Parameter $declaration $comment;\n$declaration = $definition\n" or die $!." at ".$.;
+    print display_dependent "Parameter DV$declaration |dependent variable| $comment;\nDV$declaration = $definition\n" or die $!." at ".$.;
     $name = $declaration;
+    $end_of_declaration = '';
     if ($declaration =~ /^([^\(]+)\(([^\)]+)\)$/)
     {
-        $declaration = ($name = trim $1).'\\(';
+        $name = trim $1;
+        $end_of_declaration = '\\(';
         @args = map {trim $_} split /,/, $2;
         my $i = 0;
         foreach (@args)
         {
-            $declaration .= '([^,)]+)';
-            $declaration .= ',' unless $i++ == $#args;
+            $end_of_declaration .= '([^,)]+)';
+            $end_of_declaration .= ',' unless $i++ == $#args;
             $definition =~ s/\b$_\b/\\$i/ig;
         }
-        $declaration .= '\\)';
+        $end_of_declaration .= '\\)';
     }
-    else { $declaration .= '\\b'; }
+    else { $end_of_declaration .= '\\b'; }
     $definition =~ s/\//\\\//g;
-    $definition =~ s/\.l(\s*\()/\1/g;
     $definition =~ s/;$//g;
-    print rev_script "s/\\b$declaration/($definition)/g\n" or die $!." at ".$.;
-    print display_dependent "Display $name;\n\n" or die $!." at ".$.;
+    $dotL_definition = $definition;
+    $definition =~ s/\.l(\s*\()/\1/g;
+    print rev_script "s/\\b$name$end_of_declaration/($definition)/g\n" or die $!." at ".$.; 
+    print rev_script "s/\\b$name\\.l$end_of_declaration/($dotL_definition)/g\n" or die $!." at ".$.;
+    print display_dependent "Display DV$name;\n\n" or die $!." at ".$.;
 }
 
 close dictionary or die $!." at ".$.;
@@ -86,3 +90,4 @@ tac "$directory/rev-script", ">$directory/sed-script" and die $!." at ".$.;
 shift @ARGV;
 
 sed '-rf', "$directory/sed-script", $_, ">$directory/$_" and die $!." at ".$. foreach (@ARGV);
+sed '-rf', "$directory/sed-script", "$directory/display-dependent.gen", ">$directory/display-dependent.inc" and die $!." at ".$.;
