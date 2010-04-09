@@ -89,5 +89,10 @@ tac "$directory/rev-script", ">$directory/sed-script" and die $!." at ".$.;
 
 shift @ARGV;
 
-sed '-rf', "$directory/sed-script", $_, ">$directory/$_" and die $!." at ".$. foreach (@ARGV);
+foreach (@ARGV)
+    {
+        sed '-rf', "$directory/sed-script", $_, ">$directory/$_" and die $!." at ".$. unless -d $_;
+        mkdir "$directory/$_" if -d $_;
+    }
+
 sed '-rf', "$directory/sed-script", "$directory/display-dependent.gen", ">$directory/display-dependent.inc" and die $!." at ".$.;
