@@ -1,0 +1,30 @@
+GAMS dependent variables
+
+This Perl script allow the use of dependent variables in GAMS (
+http://www.gams.com/ ).
+
+The syntax is:
+GAMS-dependent-variables.pl result-directory/ dictionary [files...]
+
+The dictionary is a file declaring the dependent variables. Empty lines are
+ignored. One declaration per line, each declaration using the following syntax:
+[comment :] name[(indice[,...])] = value;
+
+Dependent variables may include *previously* declared dependent variables in
+their values. They cannot on themselves or on not-yet-declared dependent
+variables.
+
+If a variable (dependent or not) is used in the value of a dependent variable,
+it should be used with the .l suffix.
+
+The dependent variables may then be used in any GAMS file just as any other
+variable.
+
+Marginal value and lower and upper bounds are not supported for dependent
+variables.
+
+If you want to include a summary of the value of the dependent variables (once
+only per GAMS model), include the 'display-dependent.inc' file (it will be
+created by the script).
+
+The script is licensed under a 3-clause BSD Licence.
