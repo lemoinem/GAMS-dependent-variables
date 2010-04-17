@@ -10,6 +10,8 @@ The dictionary is a file declaring the dependent variables. Empty lines are
 ignored. One declaration per line, each declaration using the following syntax:
 [comment :] name[(indice[,...])] = value;
 
+Empty lines and lines starting by a '*' are ignored.
+
 Dependent variables may include *previously* declared dependent variables in
 their values. They cannot on themselves or on not-yet-declared dependent
 variables.

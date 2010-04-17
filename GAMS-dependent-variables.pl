@@ -49,6 +49,7 @@ open dictionary, "<$ARGV[0]" or die $!." at ".$.;
 
 while(<dictionary>)
 {
+    next if '*' eq substr $_, 0, 1 ;
     ($comment, $_) = map {trim $_} split /:/;
     ($_, $comment) = ($comment, '') if $_ eq ''; # if no comment
     next if $_ eq ''; # if no definition
